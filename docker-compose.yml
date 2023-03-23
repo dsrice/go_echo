@@ -1,0 +1,26 @@
+version: '3'
+services:
+  go_echo:
+    container_name: go_echo
+    build:
+      context: ./echo/
+    volumes:
+      - ./echo:/go/src/app
+    tty: true
+    environment:
+      - TZ=Asia/Tokyo
+
+  go_echo_db:
+    image: mysql:5.7
+    container_name: mysql_host
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: echo
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./database/data:/var/lib/mysql
+    ports:
+      - 13306:3306
