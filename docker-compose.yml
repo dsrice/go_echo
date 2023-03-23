@@ -9,6 +9,8 @@ services:
     tty: true
     environment:
       - TZ=Asia/Tokyo
+    ports:
+      - 1323:1323
 
   go_echo_db:
     image: mysql:5.7
