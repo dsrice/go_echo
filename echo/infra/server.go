@@ -2,6 +2,7 @@ package infra
 
 import (
 	"app/controllers"
+	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,6 +18,9 @@ func NewServer() *Server {
 
 func (server *Server) Start() {
 	server.Echo.GET("/", controllers.NewHelloController().GetMessage)
+
+	c := jaegertracing.New(server.Echo, nil)
+	defer c.Close()
 
 	server.Echo.Start(":1323")
 }
