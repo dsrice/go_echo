@@ -1,7 +1,7 @@
 version: '3'
 services:
   go_echo:
-    container_name: go_echo
+    container_name: goEcho
     build:
       context: ./echo/
     volumes:
@@ -9,12 +9,16 @@ services:
     tty: true
     environment:
       - TZ=Asia/Tokyo
+      - JAEGER_SERVICE_NAME=go_echo_jaeger
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
     ports:
       - 1323:1323
+    networks:
+      - jaeger
 
   go_echo_db:
     image: mysql:5.7
-    container_name: mysql_host
+    container_name: mysqlEcho
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: echo
@@ -26,3 +30,18 @@ services:
       - ./database/data:/var/lib/mysql
     ports:
       - 13306:3306
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - LOG_LEVEL=debug
+    networks:
+      - jaeger
+
+networks:
+  jaeger:
